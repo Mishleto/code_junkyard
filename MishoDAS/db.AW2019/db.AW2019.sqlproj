@@ -209,6 +209,7 @@
     <Build Include="Functions\miGetRandomAlphaNumStrgin.sql" />
     <Build Include="Functions\miGetRandomIntTable.sql" />
     <Build Include="Functions\miGetRandomInt32.sql" />
+    <Build Include="Stored Procedures\miGenCreditCards_2.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
