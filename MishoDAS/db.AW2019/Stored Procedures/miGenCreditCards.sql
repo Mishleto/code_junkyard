@@ -2,6 +2,7 @@
 CREATE PROCEDURE [dbo].[miGenCreditCards]
 	@GeneratedRows int = 10
 AS
+BEGIN
 	with 
 	CardsDesc (MinCoeff, MaxCoeff, TypeDesc, TypePreff) as
 	(
@@ -29,3 +30,5 @@ AS
 		inner join CardsDesc cd on rit.RndVal >= cd.MinCoeff
 								and rit.RndVal < cd.MaxCoeff
 	OPTION (FORCE ORDER);
+
+END;

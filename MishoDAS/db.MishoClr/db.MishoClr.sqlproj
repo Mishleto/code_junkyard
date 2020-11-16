@@ -74,7 +74,7 @@
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>if $(Configuration) == Release (
-copy $(TargetPath) C:\kodene\projects\MishoDAS\db.AW2019\Assemblies\
+copy $(TargetPath) C:\kodene\projects\code_junkyard\MishoDAS\db.AW2019\Assemblies\
 copy $(TargetPath) C:\kodene\env\engines\MSSQL_HOME_DEV\MishoClr\
 )
 

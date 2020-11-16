@@ -10,6 +10,7 @@ public partial class MishoRandomData
     private static readonly Random _random = new Random();
     private static readonly String _CommonCharList = @"!@#$%^&*()_-+=|\ ~`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static readonly String _AlphanumCharList = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static readonly String _AplhaCharList = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 
     [SqlFunction]
@@ -38,13 +39,19 @@ public partial class MishoRandomData
     [return: SqlFacet(MaxSize = -1)]
     public static SqlString GetString(int sMaxSize, int IsFixed=0)
     {
-        return (SqlString)GenerateRandomString(sMaxSize, IsFixed, RandomStringType.CommonChars);
+        return (SqlString)GenerateRandomString(sMaxSize, IsFixed, _CommonCharList);
+    }
+
+    [return: SqlFacet(MaxSize = -1)]
+    public static SqlString GetAlphaString(int sMaxSize, int IsFixed = 0)
+    {
+        return (SqlString)GenerateRandomString(sMaxSize, IsFixed, _AplhaCharList);
     }
 
     [return: SqlFacet(MaxSize = -1)]
     public static SqlString GetAlphanumString(int sMaxSize, int IsFixed = 0)
     {
-        return (SqlString)GenerateRandomString(sMaxSize, IsFixed, RandomStringType.AlphaNumeric);
+        return (SqlString)GenerateRandomString(sMaxSize, IsFixed, _AlphanumCharList);
     }
 
     [SqlFunction(
@@ -75,7 +82,7 @@ public partial class MishoRandomData
         RndVal = (int)obj;
     }
 
-    private static string GenerateRandomString(int sMaxSize, int IsFixed, RandomStringType sType)
+    private static string GenerateRandomString(int sMaxSize, int IsFixed, string charPool)
     {
         if (IsFixed == 0)
         {
@@ -86,7 +93,6 @@ public partial class MishoRandomData
         }
 
         char[] Ret = new char[sMaxSize];
-        string charPool = sType == RandomStringType.AlphaNumeric ? _AlphanumCharList : _CommonCharList;
 
         for (int i = 0; i < sMaxSize; i++)
         {
@@ -102,6 +108,7 @@ public partial class MishoRandomData
 
 public enum RandomStringType
 {
+    Alpha,
     AlphaNumeric,
     CommonChars
 }
