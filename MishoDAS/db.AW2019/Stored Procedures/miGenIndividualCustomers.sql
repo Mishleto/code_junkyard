@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[miGenPeople]
+﻿CREATE PROCEDURE [dbo].[miGenIndividualCustomers]
 	@GeneratedRows int = 10
 AS
 BEGIN
@@ -15,20 +15,11 @@ BEGIN
 		
 		SET @beID = SCOPE_IDENTITY();
 
-		WITH 
-		pers(MinCoeff, MaxCoeff, PersonType) as
-		(
-			SELECT 0, 920, 'IN' UNION ALL
-			SELECT 920, 935, 'EM' UNION ALL
-			SELECT 935, 936, 'SP' UNION ALL
-			SELECT 936, 970, 'SC' UNION ALL
-			SELECT 970, 980, 'VC' UNION ALL
-			SELECT 980, 1000, 'GC'
-		)
 		INSERT
 		into Person.Person(BusinessEntityID, PersonType, Title, FirstName, MiddleName, LastName, EmailPromotion)
-		SELECT 
-			pers.PersonType as PersonType,
+		SELECT
+			@beID,
+			'IN' as PersonType,
 			CASE
 				WHEN rit.RndVal % 15 = 0 THEN 'Ms'
 				WHEN (rit.RndVal+1) % 15 = 0 THEN 'Mrs'
@@ -47,8 +38,6 @@ BEGIN
 				ELSE 0
 			END as EmailPromotion
 		FROM miGetRandomIntTable(1, 0, 1000) rit
-			inner join pers on rit.RndVal >= pers.MinCoeff
-							and rit.RndVal < pers.MaxCoeff
 		OPTION(FORCE ORDER);
 
 		SET @iter = @iter +1;

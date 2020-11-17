@@ -210,10 +210,11 @@
     <Build Include="Functions\miGetRandomIntTable.sql" />
     <Build Include="Functions\miGetRandomInt32.sql" />
     <Build Include="Stored Procedures\miGenCreditCards.sql" />
-    <Build Include="Stored Procedures\miGenPeople.sql" />
+    <Build Include="Stored Procedures\miGenIndividualCustomers.sql" />
     <Build Include="Stored Procedures\miGenStores.sql" />
     <Build Include="Stored Procedures\miGenVendors.sql" />
     <Build Include="Functions\miGetRandomAplhaString.sql" />
+    <Build Include="Functions\miCapitalizeString.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
