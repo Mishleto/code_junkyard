@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="_ClrCode\MishoRandomData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="_ClrCode\StringProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
