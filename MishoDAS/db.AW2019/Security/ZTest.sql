@@ -1,3 +1,0 @@
-﻿CREATE SCHEMA [ZTest]
-    AUTHORIZATION [dbo];
-

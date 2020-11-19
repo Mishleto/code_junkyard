@@ -1,17 +1,16 @@
-﻿CREATE PROCEDURE [dbo].[miGenIndividualCustomers]
-	@GeneratedRows int = 10
+﻿CREATE PROCEDURE [dbo].[miGenEmployees]
+	@GeneratedRows INT = 1
 AS
 BEGIN
 	
 	IF @GeneratedRows < 1
 		RETURN
 
-	DECLARE @iter int = 0;
-	DECLARE @beID int;
-	DECLARE @localTran BIT = 0;
+	DECLARE @beID INT;
+	DECLARE @iter INT = 0;
+	DECLARE @localTran INT = 0;
 
 	BEGIN TRY
-
 		IF @@TRANCOUNT = 0
 		BEGIN
 			BEGIN TRANSACTION;
@@ -20,22 +19,21 @@ BEGIN
 
 		WHILE @iter < @GeneratedRows
 		BEGIN
-			EXEC dbo.miAddRandomPerson 'IN', @beID=@beID OUTPUT
+			EXEC dbo.miAddRandomEmployee @EmployeeType='EM', @beID=@beID;
 			SET @iter = @iter +1;
 		END;
 
 		IF @localTran = 1
 			COMMIT;
-
 	END TRY
 
 	BEGIN CATCH
 		IF @localTran = 1
 			ROLLBACK;
 
-		EXECUTE [dbo].[uspLogError];
+		EXEC dbo.uspLogError;
 		RETURN -1
 	END CATCH
 
-	RETURN 0
-END;
+RETURN 0
+END

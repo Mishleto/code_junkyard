@@ -197,7 +197,6 @@
     <Build Include="Security\Production.sql" />
     <Build Include="Security\Purchasing.sql" />
     <Build Include="Security\Sales.sql" />
-    <Build Include="Security\ZTest.sql" />
     <Build Include="XMLSchemaCollections\AdditionalContactInfoSchemaCollection.sql" />
     <Build Include="XMLSchemaCollections\HRResumeSchemaCollection.sql" />
     <Build Include="XMLSchemaCollections\IndividualSurveySchemaCollection.sql" />
@@ -215,6 +214,11 @@
     <Build Include="Stored Procedures\miGenVendors.sql" />
     <Build Include="Functions\miGetRandomAplhaString.sql" />
     <Build Include="Functions\miCapitalizeString.sql" />
+    <Build Include="Stored Procedures\miGenJobCandidates.sql" />
+    <Build Include="Stored Procedures\miGenEmployees.sql" />
+    <Build Include="Stored Procedures\miGenSalesPeople.sql" />
+    <Build Include="Stored Procedures\miAddRandomPerson.sql" />
+    <Build Include="Stored Procedures\miAddRandomEmployee.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
