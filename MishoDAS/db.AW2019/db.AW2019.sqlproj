@@ -214,11 +214,12 @@
     <Build Include="Stored Procedures\miGenVendors.sql" />
     <Build Include="Functions\miGetRandomAplhaString.sql" />
     <Build Include="Functions\miCapitalizeString.sql" />
-    <Build Include="Stored Procedures\miGenJobCandidates.sql" />
     <Build Include="Stored Procedures\miGenEmployees.sql" />
     <Build Include="Stored Procedures\miGenSalesPeople.sql" />
     <Build Include="Stored Procedures\miAddRandomPerson.sql" />
     <Build Include="Stored Procedures\miAddRandomEmployee.sql" />
+    <Build Include="Stored Procedures\miGenEmpDepartmentHistory.sql" />
+    <Build Include="Stored Procedures\miGenEmpPayHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
