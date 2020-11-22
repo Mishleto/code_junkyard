@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [dbo].[miGetRandomAplhaString]
+﻿CREATE FUNCTION [dbo].[miGetRandomAlphaString]
 (
 	@sMaxSize int,
 	@IsFixed int

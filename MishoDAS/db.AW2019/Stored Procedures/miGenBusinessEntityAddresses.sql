@@ -13,7 +13,7 @@ BEGIN
 		BEGIN
 			BEGIN TRANSACTION;
 			SET @localTran = 1;
-		END
+		END;
 
 		-- create link between people without address and addresses without people
 		-- it is possible that we create less rows than specified by @GeneratedRows

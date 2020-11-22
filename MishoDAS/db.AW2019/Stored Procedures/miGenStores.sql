@@ -35,7 +35,7 @@ BEGIN
 			INSERT into Sales.Store(BusinessEntityID,Name,SalesPersonID,rowguid)
 			SELECT TOP 1
 				@beID,
-				dbo.miCapitalizeString(dbo.miGetRandomAplhaString(20,0)),
+				dbo.miCapitalizeString(dbo.miGetRandomAlphaString(20,0)),
 				sp.BusinessEntityID,
 				NEWID()
 			FROM Sales.SalesPerson sp

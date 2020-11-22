@@ -23,7 +23,7 @@ BEGIN
 		SELECT TOP 1
 			@StateProvinceID = StateProvinceID,
 			@PostalCode = CAST(dbo.miGetRandomInt32(1000,99999) as VARCHAR(5)),
-			@City = dbo.miCapitalizeString(dbo.miGetRandomAplhaString(10,1))
+			@City = dbo.miCapitalizeString(dbo.miGetRandomAlphaString(10,1))
 		FROM Person.StateProvince sp
 		WHERE EXISTS (
 				SELECT 1 
@@ -47,7 +47,7 @@ BEGIN
 				(AddressLine1, City, PostalCode, StateProvinceID, SpatialLocation)
 			VALUES (
 				CAST(dbo.miGetRandomInt32(1000,9999) as VARCHAR(4)) 
-					+ ' ' + dbo.miCapitalizeString(dbo.miGetRandomAplhaString(30)),
+					+ ' ' + dbo.miCapitalizeString(dbo.miGetRandomAlphaString(30,0)),
 				@City,
 				@PostalCode,
 				@StateProvinceID,

@@ -33,7 +33,7 @@ BEGIN
 
 			with vendor_info(preffix) as
 			(
-				SELECT upper(dbo.miGetRandomAplhaString(6,1))
+				SELECT upper(dbo.miGetRandomAlphaString(6,1))
 			)
 			INSERT 
 			into Purchasing.Vendor(BusinessEntityID, AccountNumber, Name, CreditRating, PreferredVendorStatus, ActiveFlag)

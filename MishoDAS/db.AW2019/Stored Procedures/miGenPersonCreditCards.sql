@@ -13,7 +13,7 @@ BEGIN
 		BEGIN
 			BEGIN TRANSACTION;
 			SET @localTran = 1;
-		END
+		END;
 
 		with cc as
 		(

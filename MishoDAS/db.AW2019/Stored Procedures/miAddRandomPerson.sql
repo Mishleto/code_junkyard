@@ -32,11 +32,11 @@ BEGIN
 				ELSE NULL
 			END as Title,
 			dbo.miCapitalizeString(
-				dbo.miGetRandomAplhaString(15,0)) as FirstName,
+				dbo.miGetRandomAlphaString(15,0)) as FirstName,
 			dbo.miCapitalizeString(
-				dbo.miGetRandomAplhaString(1,0)) as MiddleName,
+				dbo.miGetRandomAlphaString(1,0)) as MiddleName,
 			dbo.miCapitalizeString(
-				dbo.miGetRandomAplhaString(15,0)) as LastName,
+				dbo.miGetRandomAlphaString(15,0)) as LastName,
 			CASE
 				WHEN rit.RndVal % 4 = 0 THEN 2
 				WHEN (rit.RndVal+1) % 4 = 0 THEN 1
