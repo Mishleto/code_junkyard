@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[miGenCreditCards]
-	@GeneratedRows int = 10
+	@GeneratedRows int = 5
 AS
 BEGIN
 

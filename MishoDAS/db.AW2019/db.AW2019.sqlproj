@@ -221,6 +221,7 @@
     <Build Include="Stored Procedures\miGenEmpDepartmentHistory.sql" />
     <Build Include="Stored Procedures\miGenEmpPayHistory.sql" />
     <Build Include="Stored Procedures\miGenAddresses.sql" />
+    <Build Include="Stored Procedures\miGenPersonCreditCards.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
