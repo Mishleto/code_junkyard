@@ -220,6 +220,7 @@
     <Build Include="Stored Procedures\miAddRandomEmployee.sql" />
     <Build Include="Stored Procedures\miGenEmpDepartmentHistory.sql" />
     <Build Include="Stored Procedures\miGenEmpPayHistory.sql" />
+    <Build Include="Stored Procedures\miGenAddresses.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

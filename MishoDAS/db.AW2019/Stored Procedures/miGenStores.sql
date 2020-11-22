@@ -1,4 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[miGenStores]
+/*
+	A store must have an address but I will not add addresses here for two reasons:
+		1. It's easier :). 
+		2. I will generate random addresses that later will be associated with Stores without Address. 
+			This will allow me to tackle the challenge of "late-arriving data" in the DWH
+*/
 	@GeneratedRows int = 1
 AS
 BEGIN
