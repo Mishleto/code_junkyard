@@ -226,6 +226,8 @@
     <Build Include="Stored Procedures\miGenEmailAddresses.sql" />
     <Build Include="Stored Procedures\miGenPersonPhones.sql" />
     <Build Include="Stored Procedures\miGenCustomers.sql" />
+    <Build Include="Tables\miNumbers.sql" />
+    <Build Include="Stored Procedures\miGenCurrencyRates.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
