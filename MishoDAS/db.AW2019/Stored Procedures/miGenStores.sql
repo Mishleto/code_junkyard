@@ -15,6 +15,8 @@ BEGIN
 	DECLARE @localTran BIT = 0;
 	DECLARE @iter int = 0;
 	DECLARE @beID int;
+	DECLARE @beOwner int;
+	DECLARE @check INT;
 
 	BEGIN TRY
 		IF @@TRANCOUNT = 0
@@ -25,7 +27,8 @@ BEGIN
 
 		WHILE @iter < @GeneratedRows
 		BEGIN
-		
+			
+			-- insert BusinessEntity record for the Store record
 			INSERT 
 			into Person.BusinessEntity(rowguid) 
 			VALUES (NEWID())
@@ -40,6 +43,14 @@ BEGIN
 				NEWID()
 			FROM Sales.SalesPerson sp
 			ORDER BY dbo.miGetRandomInt32(0,100);
+
+			-- insert Person record that will play the role of Store Owner
+			EXEC @check = dbo.miAddRandomPerson @PersonType = 'SC', @beID=@beOwner;
+			IF @check = -1
+				RAISERROR('Abort inserting "Store" because Store Owner was not created.', 16,1);
+
+			INSERT into Person.BusinessEntityContact(BusinessEntityID, ContactTypeID,PersonID)
+			VALUES (@beID, 11, @beOwner);
 		
 			SET @iter = @iter + 1;
 		END;

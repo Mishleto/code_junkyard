@@ -228,6 +228,9 @@
     <Build Include="Stored Procedures\miGenCustomers.sql" />
     <Build Include="Tables\miNumbers.sql" />
     <Build Include="Stored Procedures\miGenCurrencyRates.sql" />
+    <Build Include="Stored Procedures\miGenProductDescriptions.sql" />
+    <Build Include="Stored Procedures\miGenProductModel.sql" />
+    <Build Include="Stored Procedures\miGenProductReviews.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

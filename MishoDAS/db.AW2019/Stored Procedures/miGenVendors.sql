@@ -15,6 +15,8 @@ BEGIN
 	DECLARE @localTran BIT = 0;
 	DECLARE @iter INT = 0;
 	DECLARE @beID INT;
+	DECLARE @beManager INT;
+	DECLARE @check INT;
 
 	BEGIN TRY
 		IF @@TRANCOUNT = 0
@@ -45,6 +47,14 @@ BEGIN
 				dbo.miGetRandomInt32(0,2) as PrefferdVendorStatus,
 				1 as ActiveFlag
 			FROM vendor_info;
+
+			-- insert Person record that will play the role of Store Owner
+			EXEC @check = dbo.miAddRandomPerson @PersonType = 'VC', @beID=@beManager;
+			IF @check = -1
+				RAISERROR('Abort inserting "Vendor" because Vendor Manager was not created.', 16,1);
+
+			INSERT into Person.BusinessEntityContact(BusinessEntityID, ContactTypeID,PersonID)
+			VALUES (@beID, 11, @beManager);
 
 			SET @iter = @iter + 1;
 		END;
