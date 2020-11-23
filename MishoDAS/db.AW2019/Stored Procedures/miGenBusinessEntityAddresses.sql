@@ -15,7 +15,7 @@ BEGIN
 			SET @localTran = 1;
 		END;
 
-		-- create link between people without address and addresses without people
+		-- create link between BE without address and addresses without BE
 		-- it is possible that we create less rows than specified by @GeneratedRows
 		with addr as
 		(
