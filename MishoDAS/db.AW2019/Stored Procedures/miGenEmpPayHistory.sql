@@ -6,7 +6,6 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN 0
 
-	DECLARE @iter INT = 0;
 	DECLARE @localTran BIT = 0;
 
 	BEGIN TRY
