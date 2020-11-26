@@ -236,6 +236,8 @@
     <Build Include="Stored Procedures\miGenProductListPriceHistory.sql" />
     <Build Include="Stored Procedures\miGenWorkOrders.sql" />
     <Build Include="Stored Procedures\miGenWorkOrdersUpdate.sql" />
+    <Build Include="Stored Procedures\miGenPurchaseOrders.sql" />
+    <Build Include="Stored Procedures\miGenPurchaseOrderUpdate.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
