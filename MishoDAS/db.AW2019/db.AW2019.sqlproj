@@ -238,6 +238,8 @@
     <Build Include="Stored Procedures\miGenWorkOrdersUpdate.sql" />
     <Build Include="Stored Procedures\miGenPurchaseOrders.sql" />
     <Build Include="Stored Procedures\miGenPurchaseOrderUpdate.sql" />
+    <Build Include="Stored Procedures\miGenSalesOrder.sql" />
+    <Build Include="Stored Procedures\miGenSalesOrderUpdates.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
