@@ -47,6 +47,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatTSqlWarningsAsErrors>True</TreatTSqlWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -240,6 +241,10 @@
     <Build Include="Stored Procedures\miGenPurchaseOrderUpdate.sql" />
     <Build Include="Stored Procedures\miGenSalesOrder.sql" />
     <Build Include="Stored Procedures\miGenSalesOrderUpdates.sql" />
+    <Build Include="Tables\miJobLogs.sql" />
+    <Build Include="Stored Procedures\miLogJobStart.sql" />
+    <Build Include="Stored Procedures\miLogJobSuccess.sql" />
+    <Build Include="Stored Procedures\miLogJobError.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

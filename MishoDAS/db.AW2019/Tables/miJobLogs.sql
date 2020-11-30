@@ -1,0 +1,14 @@
+﻿CREATE TABLE [dbo].[miJobLogs]
+(
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[ParentId] INT NULL,
+	[JobName] NVARCHAR(50) NOT NULL,
+	[JobStatus] NVARCHAR(20) NOT NULL,
+	[StartTime] DATETIME2 CONSTRAINT [DF_miJobLogs_StartTime] DEFAULT (SYSDATETIME()) NOT NULL,
+	[EndTime] DATETIME2 NULL,
+	[ElapsedMilisecs] as DATEDIFF(MILLISECOND, StartTime, EndTime),
+	[JobInfo] NVARCHAR(1000) NULL,
+	[ErrorInfo] NVARCHAR(1000) NULL
+);
+
+
