@@ -241,10 +241,8 @@
     <Build Include="Stored Procedures\miGenPurchaseOrderUpdate.sql" />
     <Build Include="Stored Procedures\miGenSalesOrder.sql" />
     <Build Include="Stored Procedures\miGenSalesOrderUpdates.sql" />
-    <Build Include="Tables\miJobLogs.sql" />
-    <Build Include="Stored Procedures\miLogJobStart.sql" />
-    <Build Include="Stored Procedures\miLogJobSuccess.sql" />
-    <Build Include="Stored Procedures\miLogJobError.sql" />
+    <Build Include="Tables\miProcedureLogs.sql" />
+    <Build Include="Stored Procedures\miGenAllRandomData.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -266,5 +264,12 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="db.AW2019.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\150\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\150\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
   </ItemGroup>
 </Project>

@@ -3,14 +3,14 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @iter int = 0;
+	DECLARE 
+		@localTran BIT = 0,
+		@iter int = 0,
+		@StateProvinceID INT,
+		@PostalCode VARCHAR(5),
+		@City VARCHAR(50),
+		@RandGeography geography;
 
-	DECLARE @StateProvinceID INT;
-	DECLARE @PostalCode VARCHAR(5);
-	DECLARE @City VARCHAR(50);
-	DECLARE @RandGeography geography;
-	
 	BEGIN TRY
 
 		IF @@TRANCOUNT = 0
