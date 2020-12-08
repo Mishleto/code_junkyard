@@ -248,6 +248,8 @@
     <Build Include="Stored Procedures\miInitLocalTransaction.sql" />
     <Build Include="Stored Procedures\miLogProcedureSuccessCLR.sql" />
     <Build Include="Stored Procedures\miLogProcedureErrorCLR.sql" />
+    <Build Include="Stored Procedures\miLogProcedureError.sql" />
+    <Build Include="Stored Procedures\miLogProcedureSuccess.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
