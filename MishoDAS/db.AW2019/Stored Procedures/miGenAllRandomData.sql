@@ -2,20 +2,20 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @jobID INT;
-	DECLARE @jobName VARCHAR(50) = 'GEN_ALL_RANDOM_DATA'
-	DECLARE @jobInfo VARCHAR(1000) = null;
-	DECLARE @ErrorLogID INT;
-	
-	DECLARE @rowCountBase TINYINT = 5;
-	DECLARE @ExtraRows TINYINT = 2;
-	DECLARE @rowCountExtra TINYINT = @rowCountBase + @ExtraRows;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@rowCountBase TINYINT = 5,
+		@ExtraRows TINYINT = 2,
+		@rowCountExtra TINYINT;
+
+	SET @rowCountExtra = @rowCountBase + @ExtraRows;
 	
 	BEGIN TRY
-
-		EXEC sys.sp_set_session_context @key=N'ParentJobId', @value=@jobId, @read_only=1; 
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 		
+		EXEC sys.sp_set_session_context @key=N'PARENT_LOG_ID', @value=@LogID, @read_only=1; 
 		
 
 		-- CALLED ONCE PER HOUR
@@ -55,19 +55,22 @@ BEGIN
 		EXEC dbo.miGenProductModel @GeneratedRows=1;
 		EXEC dbo.miGenStores @GeneratedRows=1;
 		EXEC dbo.miGenVendors @GeneratedRows=1;
-		
 
-		IF @localTran = 1
+
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
-		
-		EXECUTE [dbo].[uspLogError] @ErrorLogID = @ErrorLogID;
-		RETURN -1
+
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

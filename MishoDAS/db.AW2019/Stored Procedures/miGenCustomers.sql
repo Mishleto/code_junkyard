@@ -6,16 +6,13 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN
 
-	DECLARE @iter int = 0;
-	DECLARE @localTran BIT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT;
 
 	BEGIN TRY
-
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		-- Registrer rows from Person.Person with type "Individual Customer"
 		with per_wc as 
@@ -81,18 +78,20 @@ BEGIN
 				) t;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
 
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

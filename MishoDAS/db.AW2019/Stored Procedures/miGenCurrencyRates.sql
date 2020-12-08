@@ -2,20 +2,20 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT;
+
 	DECLARE @LastRates TABLE (
-		fc_code nchar(3),
-		tc_code nchar(3),
-		crd date,
-		avg_rate money,
-		eod_rate money);
+			fc_code nchar(3),
+			tc_code nchar(3),
+			crd date,
+			avg_rate money,
+			eod_rate money);
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		INSERT into @LastRates
 		SELECT 
@@ -57,17 +57,20 @@ BEGIN
 		where lvl > 1
 		option (maxrecursion 5000);
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

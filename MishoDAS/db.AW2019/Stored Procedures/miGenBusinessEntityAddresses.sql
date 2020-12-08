@@ -6,14 +6,13 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN;
 
-	DECLARE @localTran BIT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT;
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		-- create link between BE without address and addresses without BE
 		-- it is possible that we create less rows than specified by @GeneratedRows
@@ -76,17 +75,20 @@ BEGIN
 
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

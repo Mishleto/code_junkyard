@@ -6,17 +6,18 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN;
 
-	DECLARE @localTran BIT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@orderDetailsCount TINYINT,
+		@isOnline BIT;
+
 	DECLARE @OrderIDs TABLE (ID INT);
-	DECLARE @orderDetailsCount TINYINT;
-	DECLARE @isOnline BIT;
+	
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		SET @isOnline = dbo.miGetRandomInt32(0,2);
 
@@ -91,17 +92,20 @@ BEGIN
 			ListPrice
 		FROM @OrderIDs oi, prods;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

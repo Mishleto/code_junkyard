@@ -3,9 +3,13 @@
 AS
 BEGIN
 
+	IF @GeneratedRows < 1
+		RETURN;
+
 	DECLARE 
-		@localTran BIT = 0,
-		@iter int = 0,
+		@LocalTranFlag BIT,
+		@LogID INT, 
+		@Iter int = 0,
 		@StateProvinceID INT,
 		@PostalCode VARCHAR(5),
 		@City VARCHAR(50),
@@ -13,11 +17,8 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		-- get random StateProvinceID - All addresses will be added there
 		SELECT TOP 1
@@ -40,7 +41,7 @@ BEGIN
 		ORDER BY dbo.miGetRandomInt32(0,10000);
 
 		-- Insert random Addresses near the selected location
-		WHILE @iter < @GeneratedRows
+		WHILE @Iter < @GeneratedRows
 		BEGIN
 			
 			INSERT into Person.Address
@@ -57,20 +58,23 @@ BEGIN
 					@RandGeography.STSrid)
 			);
 
-			SET @iter = @iter + 1;
+			SET @Iter = @Iter + 1;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
-		
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

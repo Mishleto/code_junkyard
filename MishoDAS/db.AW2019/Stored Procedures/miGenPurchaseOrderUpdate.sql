@@ -3,17 +3,15 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @iter INT = 0;
-	DECLARE @PurchaseOrders TABLE (ID INT);
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT;
+
+	DECLARE	@PurchaseOrders TABLE (ID INT);
 
 	BEGIN TRY
-
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		INSERT into @PurchaseOrders
 		SELECT TOP (@GeneratedRows)
@@ -63,17 +61,20 @@ BEGIN
 				ModifiedDate = GETDATE()
 		WHERE PurchaseOrderID in (SELECT ID FROM @PurchaseOrders);
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
-		
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

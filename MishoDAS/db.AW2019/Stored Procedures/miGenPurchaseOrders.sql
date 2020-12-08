@@ -3,23 +3,22 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @iter INT = 0;
-	DECLARE @EmployeeID INT;
-	DECLARE @VendorID INT;
-	DECLARE @ShipMethodID INT;
-	DECLARE @PurchaseOrderID INT;
-	DECLARE @DetailsCount INT;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@Iter INT = 0,
+
+		@EmployeeID INT,
+		@VendorID INT,
+		@ShipMethodID INT,
+		@PurchaseOrderID INT,
+		@DetailsCount INT;
 
 	BEGIN TRY
-
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 		
-		WHILE @iter < @GeneratedRows
+		WHILE @Iter < @GeneratedRows
 		BEGIN
 			SET	@EmployeeID = (SELECT TOP 1 BusinessEntityID 
 								FROM HumanResources.Employee 
@@ -61,20 +60,23 @@ BEGIN
 			ORDER BY dbo.miGetRandomInt32(0,1000);
 
 
-			SET @iter = @iter + 1;
+			SET @Iter = @Iter + 1;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
-		
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

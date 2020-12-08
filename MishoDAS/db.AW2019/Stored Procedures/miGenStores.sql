@@ -12,20 +12,20 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN;
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @iter int = 0;
-	DECLARE @beID int;
-	DECLARE @beOwner int;
-	DECLARE @check INT;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT, 
+		@Iter int = 0,
+		@BEID int,
+		@BEOwner int,
+		@Check INT;
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1
-		END;
 
-		WHILE @iter < @GeneratedRows
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+
+		WHILE @Iter < @GeneratedRows
 		BEGIN
 			
 			-- insert BusinessEntity record for the Store record
@@ -33,40 +33,41 @@ BEGIN
 			into Person.BusinessEntity(rowguid) 
 			VALUES (NEWID())
 
-			SET @beID = SCOPE_IDENTITY();
+			SET @BEID = SCOPE_IDENTITY();
 
-			INSERT into Sales.Store(BusinessEntityID,Name,SalesPersonID,rowguid)
+			INSERT into Sales.Store(BusinessEntityID,Name,SalesPersonID)
 			SELECT TOP 1
-				@beID,
+				@BEID,
 				dbo.miCapitalizeString(dbo.miGetRandomAlphaString(20,0)),
-				sp.BusinessEntityID,
-				NEWID()
+				sp.BusinessEntityID
 			FROM Sales.SalesPerson sp
 			ORDER BY dbo.miGetRandomInt32(0,100);
 
 			-- insert Person record that will play the role of Store Owner
-			EXEC @check = dbo.miAddRandomPerson @PersonType = 'SC', @beID=@beOwner;
-			IF @check = -1
+			EXEC @Check = dbo.miAddRandomPerson @PersonType = 'SC', @beID=@BEOwner OUTPUT;
+			IF @Check = -1
 				RAISERROR('Abort inserting "Store" because Store Owner was not created.', 16,1);
 
-			INSERT into Person.BusinessEntityContact(BusinessEntityID, ContactTypeID,PersonID)
-			VALUES (@beID, 11, @beOwner);
+			INSERT into Person.BusinessEntityContact(BusinessEntityID, ContactTypeID, PersonID)
+			VALUES (@BEID, 11, @BEOwner);
 		
-			SET @iter = @iter + 1;
+			SET @Iter = @Iter + 1;
 		END;
 
-		IF @localTran=1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
 
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran=1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

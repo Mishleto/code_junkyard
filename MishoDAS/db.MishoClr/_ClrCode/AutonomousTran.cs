@@ -7,7 +7,7 @@ public partial class AutonomousTran
 {
     private static readonly String _logJobStartSql = String.Join(Environment.NewLine,
                                                         "INSERT into dbo.miProcedureLogs (ProcedureName, ObjectID, ParentLogID, Status, CallerName, AdditionalInfo)",
-                                                        "OUTPUT inserted.ID",
+                                                        "OUTPUT inserted.LogID",
                                                         "VALUES (@procName, @objectId, @parentLogId, 'STARTED', @callerName, @additionalInfo)");
 
     private static readonly String _logJobSuccessSql = String.Join(Environment.NewLine,
@@ -28,30 +28,19 @@ public partial class AutonomousTran
     private static readonly String _connString = (new SqlConnectionStringBuilder {
                                                     DataSource=@"DESKTOPINHO\ARTANIS",
                                                     InitialCatalog="AW2019",
-                                                    PersistSecurityInfo=true}).ConnectionString;
-    /*
- 	    [LogID] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	    [ProcedureName] NVARCHAR(50) NOT NULL,
-	    [StartTime] DATETIME2 CONSTRAINT [DF_miJobLogs_StartTime] DEFAULT (SYSDATETIME()) NOT NULL,
-	    [EndTime] DATETIME2 NULL,
-	    [Status] NVARCHAR(20) NOT NULL,
-	    [ElapsedMilisecs] as DATEDIFF(MILLISECOND, StartTime, EndTime),
-	    [ObjectID] INT NOT NULL,
-	    [ParentLogID] INT NULL,
-	    [CallerName] sys.sysname DEFAULT CONVERT(sysname, CURRENT_USER) NOT NULL,
-	    [AdditionalInfo] NVARCHAR(2000) NULL,
-	    [ErrorInfo] NVARCHAR(2000) NULL
-    */
+                                                    PersistSecurityInfo=false,
+                                                    IntegratedSecurity=true}).ConnectionString;
+
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static SqlInt32 LogJobStart (SqlString procName, SqlInt32 objectId, SqlInt32 parentLogId, SqlString callerName, SqlString additionalInfo)
+    public static SqlInt32 LogProcedureStart (SqlString procName, SqlInt32 objectID, SqlString callerName, SqlInt32 parentLogID, SqlString additionalInfo)
     {
         var res = new SqlInt32();
         
         using (SqlCommand cmd = new SqlCommand(_logJobStartSql))
         {
             cmd.Parameters.AddWithValue("@procName", procName);
-            cmd.Parameters.AddWithValue("@objectId", objectId);
-            cmd.Parameters.AddWithValue("@parentLogId", parentLogId);
+            cmd.Parameters.AddWithValue("@objectId", objectID);
+            cmd.Parameters.AddWithValue("@parentLogId", parentLogID);
             cmd.Parameters.AddWithValue("@callerName", callerName);
             cmd.Parameters.AddWithValue("@additionalInfo", additionalInfo);
             res = (SqlInt32)ExecuteCmdScalar(cmd);
@@ -61,13 +50,13 @@ public partial class AutonomousTran
     }
 
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static SqlInt32 LogJobSuccess(SqlInt32 logId)
+    public static SqlInt32 LogProcedureSuccess(SqlInt32 logID)
     {
         var res = new SqlInt32();
 
         using (var cmd = new SqlCommand(_logJobSuccessSql))
         {
-            cmd.Parameters.AddWithValue("@logId", logId);
+            cmd.Parameters.AddWithValue("@logId", logID);
             res = (SqlInt32)ExecuteCmdNonQuery(cmd);
         }
 
@@ -75,13 +64,13 @@ public partial class AutonomousTran
     }
 
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static SqlInt32 LogJobError(SqlInt32 logId, SqlString errorInfo)
+    public static SqlInt32 LogProcedureError(SqlInt32 logID, SqlString errorInfo)
     {
         var res = new SqlInt32();
 
         using (var cmd = new SqlCommand(_logJobErrorSql))
         {
-            cmd.Parameters.AddWithValue("@logId", logId);
+            cmd.Parameters.AddWithValue("@logId", logID);
             cmd.Parameters.AddWithValue("@errorInfo", errorInfo);
             res = (SqlInt32)ExecuteCmdNonQuery(cmd);
         }

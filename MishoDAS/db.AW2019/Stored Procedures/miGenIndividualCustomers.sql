@@ -6,36 +6,36 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN
 
-	DECLARE @iter int = 0;
-	DECLARE @beID int;
-	DECLARE @localTran BIT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@BEID INT,
+		@Iter INT = 0;
 
 	BEGIN TRY
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
-		IF @@TRANCOUNT = 0
+		WHILE @Iter < @GeneratedRows
 		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END
-
-		WHILE @iter < @GeneratedRows
-		BEGIN
-			EXEC dbo.miAddRandomPerson 'IN', @beID=@beID OUTPUT
-			SET @iter = @iter +1;
+			EXEC dbo.miAddRandomPerson 'IN', @beID=@BEID OUTPUT
+			SET @Iter = @Iter +1;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
 
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

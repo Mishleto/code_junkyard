@@ -12,26 +12,25 @@ BEGIN
 	IF @GeneratedRows < 1
 		RETURN;
 
-	DECLARE @localTran BIT = 0;
-	DECLARE @iter INT = 0;
-	DECLARE @beID INT;
-	DECLARE @beManager INT;
-	DECLARE @check INT;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@Iter INT = 0,
+		@BEID INT,
+		@BEManager INT,
+		@Check INT;
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
-		WHILE @iter < @GeneratedRows 
+		WHILE @Iter < @GeneratedRows 
 		BEGIN
 		
 			INSERT into Person.BusinessEntity(rowguid)
 			VALUES (NEWID());
 
-			SET @beID = SCOPE_IDENTITY();
+			SET @BEID = SCOPE_IDENTITY();
 
 			with vendor_info(preffix) as
 			(
@@ -40,7 +39,7 @@ BEGIN
 			INSERT 
 			into Purchasing.Vendor(BusinessEntityID, AccountNumber, Name, CreditRating, PreferredVendorStatus, ActiveFlag)
 			SELECT 
-				@beID,
+				@BEID,
 				preffix + '0001' as AccountNumber,
 				LEFT(preffix,1) + LOWER(SUBSTRING(preffix,2, len(preffix)-1)) + ' Cycling' as Name,
 				dbo.miGetRandomInt32(1,6) as CreditRating,
@@ -48,28 +47,31 @@ BEGIN
 				1 as ActiveFlag
 			FROM vendor_info;
 
-			-- insert Person record that will play the role of Store Owner
-			EXEC @check = dbo.miAddRandomPerson @PersonType = 'VC', @beID=@beManager;
-			IF @check = -1
+			-- insert Person record that will play the role of Vendor's Manager
+			EXEC @Check = dbo.miAddRandomPerson @PersonType = 'VC', @beID=@BEManager OUTPUT;
+			IF @Check = -1
 				RAISERROR('Abort inserting "Vendor" because Vendor Manager was not created.', 16,1);
 
 			INSERT into Person.BusinessEntityContact(BusinessEntityID, ContactTypeID,PersonID)
-			VALUES (@beID, 11, @beManager);
+			VALUES (@beID, 11, @BEManager);
 
-			SET @iter = @iter + 1;
+			SET @Iter = @Iter + 1;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;

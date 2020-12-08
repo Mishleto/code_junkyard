@@ -1,39 +1,39 @@
 ﻿CREATE PROCEDURE [dbo].[miGenEmployees]
 	@GeneratedRows INT = 1
 AS
-BEGIN
-	
+BEGIN 
 	IF @GeneratedRows < 1
-		RETURN
+		RETURN 0
 
-	DECLARE @beID INT;
-	DECLARE @iter INT = 0;
-	DECLARE @localTran INT = 0;
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT,
+		@Iter INT = 0;
 
 	BEGIN TRY
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
-		WHILE @iter < @GeneratedRows
+		WHILE @Iter < @GeneratedRows
 		BEGIN
-			EXEC dbo.miAddRandomEmployee @EmployeeType='EM', @beID=@beID;
-			SET @iter = @iter +1;
+			EXEC dbo.miAddRandomEmployee;
+			SET @Iter = @Iter +1;
 		END;
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
 
-		EXEC dbo.uspLogError;
-		RETURN -1
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-RETURN 0
-END
+	RETURN 0;
+END;

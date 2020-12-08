@@ -3,15 +3,13 @@
 AS
 BEGIN
 
-	DECLARE @localTran BIT = 0;
-
+	DECLARE 
+		@LocalTranFlag BIT,
+		@LogID INT;
+	
 	BEGIN TRY
-
-		IF @@TRANCOUNT = 0
-		BEGIN
-			BEGIN TRANSACTION;
-			SET @localTran = 1;
-		END;
+		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
+		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
 
 		INSERT into Production.ProductReview(ProductID, ReviewerName, ReviewDate, EmailAddress, Rating, Comments)
 		SELECT TOP(@GeneratedRows)
@@ -28,17 +26,20 @@ BEGIN
 		FROM Production.Product
 		ORDER BY dbo.miGetRandomInt32(1,1000);
 
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			COMMIT;
+
+		EXEC dbo.miLogProcedureSuccess @LogID;
+
 	END TRY
 
 	BEGIN CATCH
-		IF @localTran = 1
+		IF @LocalTranFlag=1
 			ROLLBACK;
-		
-		EXECUTE [dbo].[uspLogError];
-		RETURN -1
+
+		EXEC dbo.miLogProcedureError @LogID;
+		RETURN -1;
 	END CATCH
 
-	RETURN 0
+	RETURN 0;
 END;
