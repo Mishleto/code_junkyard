@@ -250,6 +250,9 @@
     <Build Include="Stored Procedures\miLogProcedureErrorCLR.sql" />
     <Build Include="Stored Procedures\miLogProcedureError.sql" />
     <Build Include="Stored Procedures\miLogProcedureSuccess.sql" />
+    <Build Include="Functions\miGetExecutionsCount.sql" />
+    <Build Include="Stored Procedures\miCollectTablesSize.sql" />
+    <Build Include="Tables\miTableSizes.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
