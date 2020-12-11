@@ -7,6 +7,6 @@ BEGIN
 
 	--TODO set @ErrorInfo
 
-	EXEC dbo.miLogProcedureErrorCLR @LogID, @ErrorInfo;
+	EXEC dbo.miLogProcedureErrorCLR @logID=@LogID, @errorInfo=@ErrorInfo;
 	
 END;

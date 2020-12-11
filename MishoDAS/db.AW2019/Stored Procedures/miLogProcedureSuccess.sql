@@ -4,6 +4,6 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	EXEC dbo.miLogProcedureSuccessCLR @LogID;
+	EXEC dbo.miLogProcedureSuccessCLR @logID=@LogID;
 
 END;

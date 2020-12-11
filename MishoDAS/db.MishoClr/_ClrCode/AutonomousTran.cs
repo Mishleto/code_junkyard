@@ -14,16 +14,14 @@ public partial class AutonomousTran
                                                         "UPDATE dbo.miProcedureLogs ",
                                                         "   set Status = 'SUCCESS', ",
                                                         "       EndTime = SYSDATETIME() ",
-                                                        "OUTPUT inserted.Id",
-                                                        "WHERE LogID = @logId and JobStatus='STARTED'");
+                                                        "WHERE LogID = @logId and Status='STARTED'");
 
     private static readonly String _logJobErrorSql = String.Join(Environment.NewLine,
                                                         "UPDATE dbo.miProcedureLogs ", 
-                                                        "   set JobStatus = 'ERROR', ",
+                                                        "   set Status = 'ERROR', ",
                                                         "       EndTime = SYSDATETIME(), ",
                                                         "       ErrorInfo = @errorInfo ",
-                                                        "OUTPUT inserted.Id",
-                                                        "WHERE LogID = @logId and JobStatus='STARTED'");
+                                                        "WHERE LogID = @logId and Status='STARTED'");
 
     private static readonly String _connString = (new SqlConnectionStringBuilder {
                                                     DataSource=@"DESKTOPINHO\ARTANIS",
