@@ -2,6 +2,8 @@
 	@GeneratedRows int = 1
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 
 	DECLARE 
 		@LocalTranFlag BIT,
@@ -9,7 +11,11 @@ BEGIN
 	
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 
 		INSERT into Production.ProductModel(Name)
 		SELECT 

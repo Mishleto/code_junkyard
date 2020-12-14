@@ -42,7 +42,7 @@ BEGIN
 
     SET NOCOUNT ON;
 
-    BEGIN TRY
+    --BEGIN TRY
         -- If inserting or updating these columns
         IF UPDATE([ProductID]) OR UPDATE([OrderQty]) OR UPDATE([UnitPrice]) OR UPDATE([UnitPriceDiscount]) 
         -- Insert record into TransactionHistory
@@ -100,19 +100,19 @@ BEGIN
             INNER JOIN [Sales].[Customer]
             ON [Sales].[Customer].[CustomerID] = [Sales].[SalesOrderHeader].[CustomerID]
         WHERE [Sales].[Customer].[PersonID] = [Person].[Person].[BusinessEntityID];
-    END TRY
-    BEGIN CATCH
-        EXECUTE [dbo].[uspPrintError];
+    --END TRY
+    --BEGIN CATCH
+    --    EXECUTE [dbo].[uspPrintError];
 
-        -- Rollback any active or uncommittable transactions before
-        -- inserting information in the ErrorLog
-        IF @@TRANCOUNT > 0
-        BEGIN
-            ROLLBACK TRANSACTION;
-        END
+    --    -- Rollback any active or uncommittable transactions before
+    --    -- inserting information in the ErrorLog
+    --    IF @@TRANCOUNT > 0
+    --    BEGIN
+    --        ROLLBACK TRANSACTION;
+    --    END
 
-        EXECUTE [dbo].[uspLogError];
-    END CATCH;
+    --    EXECUTE [dbo].[uspLogError];
+    --END CATCH;
 END;
 
 GO

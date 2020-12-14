@@ -3,6 +3,8 @@
 AS
 BEGIN
 	
+	SET NOCOUNT ON;
+	
 	IF @GeneratedRows < 1
 		RETURN;
 
@@ -19,7 +21,11 @@ BEGIN
 
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 
 		INSERT into @woTbl
 		SELECT TOP(@GeneratedRows) 
@@ -33,6 +39,7 @@ BEGIN
 		FROM Production.WorkOrder 
 		WHERE EndDate is null 
 			and DueDate > DATEADD(day, -3, GETDATE())
+			and StartDate < CONVERT(DATE, GETDATE())
 		ORDER BY dbo.miGetRandomInt32(0,1000)
 
 		UPDATE trg
@@ -44,7 +51,7 @@ BEGIN
 			inner join @woTbl src on trg.WorkOrderID = src.WorkOrderID;
 
 		UPDATE trg
-			SET trg.ActualStartDate = DATEADD(day, dbo.miGetRandomInt(-1,5), trg.ActualStartDate),
+			SET trg.ActualStartDate = DATEADD(day, dbo.miGetRandomInt32(-1,5), trg.ActualStartDate),
 				trg.ActualEndDate = CAST(GETDATE() as DATE),
 				trg.ActualResourceHrs = floor(trg.ActualResourceHrs * src.ActualCostPct),
 				trg.ActualCost = floor(trg.ActualCost * src.ActualCostPct),

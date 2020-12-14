@@ -10,7 +10,7 @@
 	[CallerName] sys.sysname DEFAULT user_name() NOT NULL,
 	[ParentLogID] INT NULL,
 	[AdditionalInfo] NVARCHAR(2000) NULL,
-	[ErrorInfo] NVARCHAR(2000) NULL
+	[ErrorInfo] NVARCHAR(4000) NULL
 );
 
 

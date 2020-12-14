@@ -1,6 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[miGenAllRandomData]
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 
 	DECLARE 
 		@LocalTranFlag BIT,
@@ -14,7 +16,11 @@ BEGIN
 	
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 		
 		EXEC sys.sp_set_session_context @key=N'PARENT_LOG_ID', @value=@LogID, @read_only=1; 
 		

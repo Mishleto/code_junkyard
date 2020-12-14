@@ -2,6 +2,8 @@
 	@GeneratedRows int = 5
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 
 	DECLARE 
 		@LocalTranFlag BIT,
@@ -16,7 +18,11 @@ BEGIN
 
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 		
 		WHILE @Iter < @GeneratedRows
 		BEGIN
@@ -24,7 +30,7 @@ BEGIN
 								FROM HumanResources.Employee 
 								ORDER BY dbo.miGetRandomInt32(0,1000));
 			SET	@VendorID = (SELECT TOP 1 BusinessEntityID 
-								FROM HumanResources.Employee 
+								FROM Purchasing.Vendor
 								ORDER BY dbo.miGetRandomInt32(0,1000));
 			SET	@ShipMethodID = (SELECT TOP 1 ShipMethodID 
 									FROM Purchasing.ShipMethod 

@@ -245,7 +245,6 @@
     <Build Include="Stored Procedures\miGenAllRandomData.sql" />
     <Build Include="Stored Procedures\miLogProcedureStart.sql" />
     <Build Include="Stored Procedures\miLogProcedureStartCLR.sql" />
-    <Build Include="Stored Procedures\miInitLocalTransaction.sql" />
     <Build Include="Stored Procedures\miLogProcedureSuccessCLR.sql" />
     <Build Include="Stored Procedures\miLogProcedureErrorCLR.sql" />
     <Build Include="Stored Procedures\miLogProcedureError.sql" />

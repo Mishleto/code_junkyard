@@ -3,6 +3,8 @@
 AS
 BEGIN
 	
+	SET NOCOUNT ON;
+	
 	IF @GeneratedRows < 1
 		RETURN;
 
@@ -19,7 +21,11 @@ BEGIN
 
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 
 		INSERT into Production.WorkOrder(ProductID, OrderQty, ScrappedQty, StartDate, DueDate)
 		OUTPUT inserted.WorkOrderID, inserted.ProductID, inserted.OrderQty, inserted.StartDate, inserted.DueDate 
@@ -54,7 +60,7 @@ BEGIN
 			6,
 			wot.ScheduledStartDate,
 			wot.ScheduledEndDate,
-			wot.OrderQty * p.StandardCost
+			wot.OrderQty * p.StandardCost + 10
 		FROM @woTbl wot
 			inner join Production.Product p on wot.ProductID = p.ProductID;
 		

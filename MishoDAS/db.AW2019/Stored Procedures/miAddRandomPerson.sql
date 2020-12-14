@@ -4,6 +4,7 @@
 AS
 BEGIN
 	
+	SET NOCOUNT ON;
 	DECLARE @localTran BIT = 0;
 
 	BEGIN TRY

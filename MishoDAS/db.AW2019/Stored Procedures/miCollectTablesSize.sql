@@ -1,6 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[miCollectTablesSize]
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 	DECLARE 
 		@SqlCmd NVARCHAR(MAX),
 		@dtNow DATETIME = GETDATE();

@@ -3,9 +3,12 @@
 AS
 BEGIN
 	
-	DECLARE @ErrorInfo NVARCHAR(2000);
+	SET NOCOUNT ON;
+	
+	DECLARE @ErrorInfo NVARCHAR(4000);
 
-	--TODO set @ErrorInfo
+	SET @ErrorInfo = 'Error Line: ' + CONVERT(nvarchar(5), ERROR_LINE()) + ' | '
+                    + 'Error Message: ' + ERROR_MESSAGE();
 
 	EXEC dbo.miLogProcedureErrorCLR @logID=@LogID, @errorInfo=@ErrorInfo;
 	

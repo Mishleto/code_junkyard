@@ -76,7 +76,7 @@ BEGIN
 
     SET NOCOUNT ON;
 
-    BEGIN TRY
+    --BEGIN TRY
         -- Update RevisionNumber for modification of any field EXCEPT the Status.
         IF NOT UPDATE([Status])
         BEGIN
@@ -119,19 +119,19 @@ BEGIN
                 IN (SELECT DISTINCT inserted.[TerritoryID] FROM inserted 
                     WHERE inserted.[OrderDate] BETWEEN @StartDate AND @EndDate);
         END;
-    END TRY
-    BEGIN CATCH
-        EXECUTE [dbo].[uspPrintError];
+    --END TRY
+    --BEGIN CATCH
+    --    EXECUTE [dbo].[uspPrintError];
 
-        -- Rollback any active or uncommittable transactions before
-        -- inserting information in the ErrorLog
-        IF @@TRANCOUNT > 0
-        BEGIN
-            ROLLBACK TRANSACTION;
-        END
+    --    -- Rollback any active or uncommittable transactions before
+    --    -- inserting information in the ErrorLog
+    --    IF @@TRANCOUNT > 0
+    --    BEGIN
+    --        ROLLBACK TRANSACTION;
+    --    END
 
-        EXECUTE [dbo].[uspLogError];
-    END CATCH;
+    --    EXECUTE [dbo].[uspLogError];
+    --END CATCH;
 END;
 
 GO

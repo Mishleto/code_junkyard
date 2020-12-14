@@ -2,6 +2,8 @@
 	@GeneratedRows int = 10
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 
 	IF @GeneratedRows < 1
 		RETURN;
@@ -18,7 +20,11 @@ BEGIN
 	BEGIN TRY
 
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		 IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 
 		-- get random StateProvinceID - All addresses will be added there
 		SELECT TOP 1

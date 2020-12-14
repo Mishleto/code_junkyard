@@ -3,6 +3,8 @@
 AS
 BEGIN
 	
+	SET NOCOUNT ON;
+
 	IF @GeneratedRows < 1
 		RETURN;
 
@@ -17,7 +19,11 @@ BEGIN
 
 	BEGIN TRY
 		EXEC dbo.miLogProcedureStart @ProcedureID = @@PROCID, @LogID = @LogID OUTPUT;
-		EXEC dbo.miInitLocalTransaction @LocalTranFlag OUTPUT;
+		IF @@TRANCOUNT = 0
+		BEGIN
+			BEGIN TRANSACTION;
+			SET @LocalTranFlag = 1;
+		END;
 
 		SET @isOnline = dbo.miGetRandomInt32(0,2);
 
@@ -78,18 +84,23 @@ BEGIN
 			SELECT TOP(@orderDetailsCount)
 				ProductID,
 				ListPrice
-			FROM Production.Product
+			FROM Production.Product p
 			WHERE DiscontinuedDate is null
+				and exists (SELECT 1 
+							FROM Sales.SpecialOfferProduct sop 
+							WHERE sop.ProductID = p.ProductID
+						)
 			ORDER BY dbo.miGetRandomInt32(0,1000)
 		)
 		INSERT
 		into Sales.SalesOrderDetail
-			(SalesOrderID, OrderQty, ProductID, UnitPrice)
+			(SalesOrderID, OrderQty, ProductID, UnitPrice, SpecialOfferID)
 		SELECT
 			oi.ID,
 			dbo.miGetRandomInt32(1,4) OrderQty,
 			ProductID,
-			ListPrice
+			ListPrice,
+			1
 		FROM @OrderIDs oi, prods;
 
 		IF @LocalTranFlag=1

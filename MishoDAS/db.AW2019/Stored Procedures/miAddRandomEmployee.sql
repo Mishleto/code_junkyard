@@ -1,8 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[miAddRandomEmployee]
 	@EmployeeType CHAR(2) = 'EM',
-	@beID INT OUTPUT
+	@beID INT = NULL OUTPUT
 AS
 BEGIN
+	
+	SET NOCOUNT ON;
 	DECLARE @localTran BIT = 0;
 	DECLARE @res INT;
 
